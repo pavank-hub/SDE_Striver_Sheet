@@ -2,15 +2,18 @@
 LeetCode 1 - Two Sum
 
 Approach:
-- Use a hash map to store previously seen numbers and their indices.
-- For each element, calculate its complement:
-      val = target - nums[i]
-- Check if the complement already exists in the hash map.
-- If it exists, we have found the pair of indices.
-- Otherwise, store the current element and its index in the hash map.
-- This is a one-pass hash map solution.
+- Store each element along with its original index in a pair vector.
+- Sort the vector based on element values.
+- Use the Two Pointer technique:
+    - One pointer starts from the beginning.
+    - One pointer starts from the end.
+- If the current sum equals the target, return the original indices.
+- If the sum is greater than the target, move the right pointer left.
+- Otherwise, move the left pointer right.
+- Sorting changes the order of elements, so original indices are preserved
+  in the pair vector.
 
-Time Complexity: O(n)
+Time Complexity: O(n log n)
 Space Complexity: O(n)
 */
 
@@ -18,27 +21,34 @@ class Solution {
 public:
     vector<int> twoSum(vector<int>& nums, int target) {
 
-        unordered_map<int, int> mp;
+        vector<pair<int, int>> arr;
 
         int n = nums.size();
 
-        int ind1 = 0, ind2 = 1;
+        for(int i = 0; i < n; i++)
+            arr.push_back({nums[i], i});
 
-        for(int i = 0; i < n; i++) {
+        sort(arr.begin(), arr.end());
 
-            int val = target - nums[i];
+        int i = 0;
+        int j = n - 1;
 
-            if(mp.find(val) != mp.end() && mp[val] != i) {
+        while(i < j) {
 
-                ind1 = i;
-                ind2 = mp[val];
+            long long sum = arr[i].first + arr[j].first;
 
-                break;
-            }
+            int t = target;
 
-            mp[nums[i]] = i;
+            if(sum == t)
+                return {arr[i].second, arr[j].second};
+
+            else if(sum > t)
+                j--;
+
+            else
+                i++;
         }
 
-        return {ind1, ind2};
+        return {};
     }
 };
